@@ -6,7 +6,7 @@ use warnings;
 
 our @ISA = qw();
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub ModulesList {
     my @modules;
@@ -23,16 +23,22 @@ sub ModulesList {
     return @modules;
 }
 
-END {
-    print STDERR "\nModules used by $0:\n";
+sub FormattedModulesList {
+    my $text = "\nModules used by $0:\n";
     my @modules = ModulesList();
     
     foreach (@modules) {
-        print STDERR" - $_->{name} ", " " x (25 - length($_->{name})),
-            "$_->{version} ", " " x (8 - length($_->{version})),
+        $text .= " - $_->{name} " . (" " x (25 - length($_->{name}))) .
+            "$_->{version} " . (" " x (8 - length($_->{version}))) .
             "$_->{path}\n";
     }
-    print STDERR "\n";
+    $text .= "\n";
+    
+    return $text;
+}
+
+END {
+    print STDERR FormattedModulesList();
 }
 
 
@@ -57,8 +63,21 @@ your script exits (even if it died).
 
 =head1 FUNCTIONS
 
-You can call C<Module::PrintUsed::ModulesList> directly to get a list of
-modules used together with their version numbers and paths.
+=over 4
+
+=item C<Module::PrintUsed::ModulesList()>
+
+Returns a list of modules used in the format
+
+    @modules = ({name => 'Some::Module', version => '0.1',
+                 path => '/home/thisuser/lib/Some/Module.pm'}, ...);
+
+=item C<Module::PrintUsed::FormattedModulesList()> 
+
+Returns a scalar that contains a pretty-printed version of the
+modules list.
+
+=back
 
 =head1 SEE ALSO
 
@@ -67,11 +86,11 @@ to execute the script is performed by L<Module::ScanDeps>.
 
 =head1 AUTHOR
 
-Christian Renz, E<lt>crenz@web42.com<gt>
+Christian Renz, E<lt>crenz@web42.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2004 by Christian Renz E<lt>crenz@web42.com<gt>. All rights reserved.
+Copyright 2004 Christian Renz E<lt>crenz@web42.comE<gt>. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 
